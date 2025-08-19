@@ -196,6 +196,12 @@ struct ContentView: View {
     @State private var weight: Double = 1060.0   // kg
     @State private var surface: RunwaySurface = .paved
 
+    // Discrete options for wheel-based pickers
+    private let temperatureOptions = Array(stride(from: -25.0, through: 50.0, by: 1.0))
+    private let altitudeOptions = Array(stride(from: 0.0, through: 6000.0, by: 100.0))
+    private let headwindOptions = Array(stride(from: -20.0, through: 20.0, by: 1.0))
+    private let weightOptions = Array(stride(from: 960.0, through: 1160.0, by: 10.0))
+
     // Performance tables derived from the 2021 AFM supplement for
     // Tecnam P2010 Mk2 IO‑390.  Distances are provided in metres.
     private let performanceTables: [PerformanceTable] = {
@@ -311,33 +317,41 @@ struct ContentView: View {
                         .padding(.vertical, 8)
                 }
                 Section(header: Text("Input Parameters")) {
-                    HStack {
+                    VStack(alignment: .leading) {
                         Text("Temperature (°C)")
-                        Spacer()
-                        TextField("°C", value: $temperature, formatter: NumberFormatter())
-                            .keyboardType(.numbersAndPunctuation)
-                            .frame(width: 80)
+                        Picker("Temperature", selection: $temperature) {
+                            ForEach(temperatureOptions, id: \.self) { value in
+                                Text("\(Int(value))").tag(value)
+                            }
+                        }
+                        .pickerStyle(.wheel)
                     }
-                    HStack {
+                    VStack(alignment: .leading) {
                         Text("Pressure Altitude (ft)")
-                        Spacer()
-                        TextField("ft", value: $altitude, formatter: NumberFormatter())
-                            .keyboardType(.numbersAndPunctuation)
-                            .frame(width: 80)
+                        Picker("Altitude", selection: $altitude) {
+                            ForEach(altitudeOptions, id: \.self) { value in
+                                Text("\(Int(value))").tag(value)
+                            }
+                        }
+                        .pickerStyle(.wheel)
                     }
-                    HStack {
+                    VStack(alignment: .leading) {
                         Text("Headwind (+) / Tailwind (−) (kt)")
-                        Spacer()
-                        TextField("kt", value: $headwind, formatter: NumberFormatter())
-                            .keyboardType(.numbersAndPunctuation)
-                            .frame(width: 80)
+                        Picker("Wind", selection: $headwind) {
+                            ForEach(headwindOptions, id: \.self) { value in
+                                Text("\(Int(value))").tag(value)
+                            }
+                        }
+                        .pickerStyle(.wheel)
                     }
-                    HStack {
+                    VStack(alignment: .leading) {
                         Text("Take‑off Weight (kg)")
-                        Spacer()
-                        TextField("kg", value: $weight, formatter: NumberFormatter())
-                            .keyboardType(.numbersAndPunctuation)
-                            .frame(width: 80)
+                        Picker("Weight", selection: $weight) {
+                            ForEach(weightOptions, id: \.self) { value in
+                                Text("\(Int(value))").tag(value)
+                            }
+                        }
+                        .pickerStyle(.wheel)
                     }
                     Picker("Runway Surface", selection: $surface) {
                         ForEach(RunwaySurface.allCases) { surface in
