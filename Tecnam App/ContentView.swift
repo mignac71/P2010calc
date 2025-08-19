@@ -195,6 +195,10 @@ struct ContentView: View {
     @State private var headwind: Double = 0.0    // knots.  Positive for headwind, negative for tailwind
     @State private var weight: Double = 1060.0   // kg
     @State private var surface: RunwaySurface = .paved
+    @State private var showTemperaturePicker = false
+    @State private var showAltitudePicker = false
+    @State private var showWindPicker = false
+    @State private var showWeightPicker = false
 
     // Discrete options for wheel-based pickers
     private let temperatureOptions = Array(stride(from: -25.0, through: 50.0, by: 1.0))
@@ -319,39 +323,79 @@ struct ContentView: View {
                 Section(header: Text("Input Parameters")) {
                     VStack(alignment: .leading) {
                         Text("Temperature (°C)")
-                        Picker("Temperature", selection: $temperature) {
-                            ForEach(temperatureOptions, id: \.self) { value in
-                                Text("\(Int(value))").tag(value)
-                            }
+                        Button(String(Int(temperature))) {
+                            showTemperaturePicker = true
                         }
-                        .pickerStyle(.wheel)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .sheet(isPresented: $showTemperaturePicker) {
+                        VStack {
+                            Picker("Temperature", selection: $temperature) {
+                                ForEach(temperatureOptions, id: \.self) { value in
+                                    Text("\(Int(value))").tag(value)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            Button("Done") { showTemperaturePicker = false }
+                                .padding()
+                        }
                     }
                     VStack(alignment: .leading) {
                         Text("Pressure Altitude (ft)")
-                        Picker("Altitude", selection: $altitude) {
-                            ForEach(altitudeOptions, id: \.self) { value in
-                                Text("\(Int(value))").tag(value)
-                            }
+                        Button(String(Int(altitude))) {
+                            showAltitudePicker = true
                         }
-                        .pickerStyle(.wheel)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .sheet(isPresented: $showAltitudePicker) {
+                        VStack {
+                            Picker("Altitude", selection: $altitude) {
+                                ForEach(altitudeOptions, id: \.self) { value in
+                                    Text("\(Int(value))").tag(value)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            Button("Done") { showAltitudePicker = false }
+                                .padding()
+                        }
                     }
                     VStack(alignment: .leading) {
                         Text("Headwind (+) / Tailwind (−) (kt)")
-                        Picker("Wind", selection: $headwind) {
-                            ForEach(headwindOptions, id: \.self) { value in
-                                Text("\(Int(value))").tag(value)
-                            }
+                        Button(String(Int(headwind))) {
+                            showWindPicker = true
                         }
-                        .pickerStyle(.wheel)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .sheet(isPresented: $showWindPicker) {
+                        VStack {
+                            Picker("Wind", selection: $headwind) {
+                                ForEach(headwindOptions, id: \.self) { value in
+                                    Text("\(Int(value))").tag(value)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            Button("Done") { showWindPicker = false }
+                                .padding()
+                        }
                     }
                     VStack(alignment: .leading) {
                         Text("Take‑off Weight (kg)")
-                        Picker("Weight", selection: $weight) {
-                            ForEach(weightOptions, id: \.self) { value in
-                                Text("\(Int(value))").tag(value)
-                            }
+                        Button(String(Int(weight))) {
+                            showWeightPicker = true
                         }
-                        .pickerStyle(.wheel)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .sheet(isPresented: $showWeightPicker) {
+                        VStack {
+                            Picker("Weight", selection: $weight) {
+                                ForEach(weightOptions, id: \.self) { value in
+                                    Text("\(Int(value))").tag(value)
+                                }
+                            }
+                            .pickerStyle(.wheel)
+                            Button("Done") { showWeightPicker = false }
+                                .padding()
+                        }
                     }
                     Picker("Runway Surface", selection: $surface) {
                         ForEach(RunwaySurface.allCases) { surface in
