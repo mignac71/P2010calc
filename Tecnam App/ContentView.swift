@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreLocation
 
 /// Represents the available runway surface types.  Values correspond to
 /// correction factors as described in the AFM.  Grass runways require a
@@ -190,6 +191,7 @@ private func interpolatePerformance(for weight: Double,
 
 struct ContentView: View {
     // MARK: - User Inputs
+    @StateObject private var locationManager = LocationManager()
     @State private var temperature: Double = 15.0 // °C
     @State private var altitude: Double = 0.0     // ft
     @State private var headwind: Double = 0.0    // knots.  Positive for headwind, negative for tailwind
@@ -425,6 +427,13 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("P2010 Runway Calculator")
+        }
+        .onAppear { locationManager.requestLocation() }
+        .onReceive(locationManager.$fetchedTemperature) { temp in
+            if let temp = temp { self.temperature = temp }
+        }
+        .onReceive(locationManager.$fetchedAltitude) { alt in
+            if let alt = alt { self.altitude = alt }
         }
     }
 }
